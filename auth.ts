@@ -51,11 +51,13 @@ export const config = {
           // If user does not exist or password does not match
           return null
         }
+        return null
       },
     }),
   ],
 
   callbacks: {
+    // eslint-disable-next-line
     async session({ session, user, trigger, token }: any) {
       // Set the user ID from the token
       session.user.id = token.sub
