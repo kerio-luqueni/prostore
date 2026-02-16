@@ -8,12 +8,16 @@ import Link from "next/link"
 import { useActionState } from "react"
 import { useFormStatus } from "react-dom"
 import { signInWithCredentials } from "@/lib/actions/user.actions"
+import { useSearchParams } from "next/navigation"
 
 const CredentialsSignInForm = () => {
   const [data, action] = useActionState(signInWithCredentials, {
     success: false,
     message: "",
   })
+
+  const searchParams = useSearchParams()
+  const callbackUrl = searchParams.get("callbackUrl") || "/"
 
   const SignInButton = () => {
     const { pending } = useFormStatus()
@@ -37,6 +41,8 @@ const CredentialsSignInForm = () => {
             {data.message}
           </div>
         )}
+
+        <input type="hidden" name="callbackUrl" value={callbackUrl} />
 
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
