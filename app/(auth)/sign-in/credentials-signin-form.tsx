@@ -5,12 +5,40 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { signInDefaultValues } from "@/lib/constants"
 import Link from "next/link"
+import { useActionState } from "react"
+import { useFormStatus } from "react-dom"
+import { signInWithCredentials } from "@/lib/actions/user.actions"
 
 const CredentialsSignInForm = () => {
+  const [data, action] = useActionState(signInWithCredentials, {
+    success: false,
+    message: "",
+  })
+
+  const SignInButton = () => {
+    const { pending } = useFormStatus()
+
+    return (
+      <Button
+        disabled={pending}
+        className="w-full cursor-pointer"
+        variant="default"
+      >
+        {pending ? "Signing In..." : "Sign In"}
+      </Button>
+    )
+  }
+
   return (
-    <form>
+    <form action={action}>
       <div className="space-y-6">
-        <div>
+        {data && !data.success && data.message && (
+          <div className="text-center text-destructive px-2 py-2 w-full rounded-sm bg-red-300 border border-destructive">
+            {data.message}
+          </div>
+        )}
+
+        <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <Input
             id="email"
@@ -21,7 +49,7 @@ const CredentialsSignInForm = () => {
             defaultValue={signInDefaultValues.email}
           />
         </div>
-        <div>
+        <div className="space-y-2">
           <Label htmlFor="password">Password</Label>
           <Input
             id="password"
@@ -33,10 +61,9 @@ const CredentialsSignInForm = () => {
           />
         </div>
         <div>
-          <Button className="w-full" variant="default">
-            Sign In
-          </Button>
+          <SignInButton />
         </div>
+
         <div className="text-sm text-center text-muted-foreground">
           Don&apos;t have an account?{" "}
           <Link href="/sign-up" target="_self" className="link">
